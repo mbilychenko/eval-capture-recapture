@@ -19,19 +19,19 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
 ## 2. Data (frozen)
 - **Dataset:** CUAD v1, 510 commercial contracts with clauses labelled by lawyers (The Atticus Project, CC BY 4.0).
 - **Sample:**
-  - 150 contracts, seed `20261018`;
+  - all 294 qualifying contracts (seed `20261018` fixes the order);
   - only contracts of at most 40,000 characters (294 of 510 qualify);
   - drawn by `scripts/01_sample.py`.
 - **10 clause categories:** chosen before running any model, for being open-ended:
   - License Grant, Cap On Liability, Anti-Assignment, Audit Rights, Insurance;
   - Post-Termination Services, Minimum Commitment, Revenue/Profit Sharing, Exclusivity, Ip Ownership Assignment.
 - **Unit:** one labelled clause (contract, category, span); overlapping labels are merged.
-- **True N = 690**, from 41 to 121 per category.
+- **True N = 1,413**, from 75 to 238 per category.
 - **The lawyer labels are treated as the truth.** Clauses the lawyers missed but an agent found count as false positives here. This is reported as a limit.
 
 ## 3. Agents
 
-**Main set (6 agents, a ladder from "copies" to "strangers"):**
+**Main set (7 agents, a ladder from "copies" to "strangers"):**
 
 | Agent | Model | Prompt | Rung |
 |---|---|---|---|
@@ -41,6 +41,7 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
 | sonnet | Claude Sonnet 5.5 | standard | same family, larger model |
 | gpt_luna | OpenAI GPT-6 luna | standard | other family, small |
 | gpt_sol | OpenAI GPT-6.1 sol | standard | other family, larger |
+| keyword | keyword rules, no AI (`src/crc/keyword_agent.py`) | none | different method entirely |
 
 - The design is a 2×2 at matched prices: Haiku 5.5 and GPT-6 luna both cost $0.10 / $0.50 per million tokens, and Sonnet 5.5 and GPT-6.1 sol both cost $2 / $10. A difference between families can't come from one side buying the stronger model.
 - **Specialists**, used only for H4: `haiku_specA` and `haiku_specB`. They see all 10 clause types, but each is told to focus on a different half and report the other half only when it's obvious.
@@ -59,8 +60,8 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
   - Chao Mh;
   - first- and second-order jackknife (Burnham & Overton), designed for items that differ in how easy they are to catch;
   - a log-linear model with pairwise dependence chosen by AIC (Fienberg).
-- **Repeated trials:** every estimate is made separately for each of the 10 categories, so each category is its own "lake" with a known N. That gives 15 pairs × 10 categories = 150 checks against the truth. Intervals for the totals come from resampling contracts (1,000 bootstrap resamples).
-- **Recall estimate** for agent *i*: r̂ᵢ = (items found by *i*) ÷ N̂, against the true recall rᵢ = (labelled clauses caught by *i*) ÷ 690.
+- **Repeated trials:** every estimate is made separately for each of the 10 categories, so each category is its own "lake" with a known N. That gives 21 pairs × 10 categories = 210 checks against the truth. Intervals for the totals come from resampling contracts (1,000 bootstrap resamples).
+- **Recall estimate** for agent *i*: r̂ᵢ = (items found by *i*) ÷ N̂, against the true recall rᵢ = (labelled clauses caught by *i*) ÷ 1,413.
 - **Common-practice baseline: pooled recall.** This treats everything any agent found as the full truth, as many evals do: rᵢ ≈ (found by *i*) ÷ (found by anyone).
 - **Audit correction (label-free setting):**
   - 10% of the joined items (seeded) are "checked by a human", simulated with the labels;
@@ -68,10 +69,10 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
   - the frequency counts are scaled by those shares before estimating.
 - **Dependence of a pair:**
   - the dependence ratio = observed overlap ÷ overlap expected under independence (uses the true N);
-  - the **excess dependence** = a pair's ratio ÷ the median ratio of the 8 cross-family pairs.
+  - the **excess dependence** = a pair's ratio ÷ the median ratio of the 8 Anthropic × OpenAI pairs.
 
 ## 6. Primary outcome
-**How accurately each main agent's recall can be estimated without labels.** Measured as the mean absolute error of r̂ᵢ against the true rᵢ across the 6 main agents. It is computed three ways:
+**How accurately each main agent's recall can be estimated without labels.** Measured as the mean absolute error of r̂ᵢ against the true rᵢ across the 7 main agents. It is computed three ways:
 - (a) pooled recall;
 - (b) the best two-source estimate (the most diverse pair, chosen by the H8 diagnostic, so without labels);
 - (c) the all-agent estimate with the audit correction.
@@ -85,12 +86,14 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
 - **H4, specialising maps:** the specialist pair (specA, specB) overestimates N (median relative error above 0).
 - **H5, matching:** in the label-free setting, the estimated N changes monotonically with the matching threshold. The size of the effect is reported against the two-source spread.
 - **H6, more sources:** the all-main-agent log-linear and second-order jackknife estimates have a smaller absolute error than the median two-source estimate.
-- **H7, the agreement paradox:** across the 15 main pairs:
+- **H7, the agreement paradox:** across the 21 main pairs:
   - higher agreement goes with a lower estimate (Spearman correlation between dependence ratio and N̂ ÷ N below 0);
   - higher agreement also goes with a narrower interval (Spearman correlation between dependence ratio and interval width ÷ N̂ below 0).
 
   Agreement makes the estimate look *more* certain while it moves *further* from the truth.
 - **H8, finding blind spots without labels:** the pairwise interactions the log-linear model selects in the label-free setting (no truth used) include the pair with the highest true dependence ratio among the main agents.
+
+- **H9, a different method:** the 6 pairs that include the keyword checker have the lowest dependence ratios of all pairs (median below the median of the 15 LLM–LLM pairs), and their median absolute error in N is below that of the LLM–LLM pairs.
 
 ## 8. Exclusions
 - A contract is dropped for all agents if any agent fails on it after 3 retries. The count is reported.
@@ -98,3 +101,7 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
 
 ## 9. Changes after registration
 - **2026-10-18, dry run.** The Anthropic SDK in use (1.15) no longer accepts a `temperature` parameter, so Claude agents run with the API's default sampling; OpenAI agents keep temperature 1.0. Repeated runs of the same Claude model (haiku_run1 vs haiku_run2) still differ through sampling, which the dry run checks.
+- **2026-10-18, before the full run (dry run: 5 contracts, no hypothesis computed).**
+  - Added a rule-based keyword checker as a 7th main agent (and H9). It is the most independent net available, and readers can rerun it without API keys. Its rules were written from general contract vocabulary, and were not tuned on the labels.
+  - Widened the sample from 150 contracts to all 294 under the length cap (true N 690 → 1,413), so the per-category checks have more clauses. The extra cost is about $4.
+  - Reason for both: the dry run suggested strong dependence between all the LLM agents, so the design needs a more independent net and tighter intervals to tell the outcomes apart.

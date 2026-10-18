@@ -137,6 +137,14 @@ def run_agent(name: str, spec: dict, contract: dict, budget: Budget, retries: in
     out = RAW_OUT / name / f"{safe(contract['id'])}.json"
     if out.exists():
         return json.loads(out.read_text(encoding="utf-8"))
+    if spec["provider"] == "keyword":                      # rule-based checker: no API, no cost
+        from .keyword_agent import keyword_answer
+        rec = {"agent": name, "contract": contract["id"], "model": "keyword-rules", "prompt": None,
+               "focus": None, "temperature": None, "usage": {"input": 0, "output": 0}, "usd": 0.0,
+               "answer": keyword_answer(contract["text"], list(contract["categories"])), "raw_text": ""}
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+        return rec
     budget.check()
     system = PROMPTS[spec["prompt"]] + (focus_text(spec["focus"]) if spec.get("focus") else "")
     task = task_text(contract["categories"])

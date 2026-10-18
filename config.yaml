@@ -2,7 +2,7 @@
 seed: 20261018
 
 sample:
-  n_contracts: 150
+  n_contracts: 294         # every contract under the length cap (was 150; changed before the full run)
   max_chars: 40000          # ~10k tokens per contract; keeps cost low (294 of 510 contracts qualify)
   categories:               # open-ended clause types: a contract can hold several of each
     - License Grant
@@ -21,9 +21,9 @@ matching:
   sensitivity: [0.3, 0.5, 0.7]
   fuzzy_min_score: 90       # rapidfuzz score to accept an inexact quote
 
-# The main set (6 agents) forms the dependence ladder. The two specialists are used
+# The main set (7 agents: 6 LLMs + keyword rules) forms the dependence ladder. The two specialists are used
 # only for the "specialising sources" test (H4). Model ids confirmed at the dry run.
-main_agents: [haiku_run1, haiku_run2, haiku_alt, sonnet, gpt_luna, gpt_sol]
+main_agents: [haiku_run1, haiku_run2, haiku_alt, sonnet, gpt_luna, gpt_sol, keyword]
 
 agents:
   haiku_run1:  {provider: anthropic, model: claude-haiku-5-5,  prompt: standard,  temperature: 1.0}
@@ -32,6 +32,7 @@ agents:
   sonnet:      {provider: anthropic, model: claude-sonnet-5-5, prompt: standard,  temperature: 1.0}
   gpt_luna:    {provider: openai,    model: gpt-6-luna,        prompt: standard,  temperature: 1.0, reasoning_effort: low}
   gpt_sol:     {provider: openai,    model: gpt-6.1-sol,       prompt: standard,  temperature: 1.0, reasoning_effort: low}
+  keyword:     {provider: keyword,   model: keyword-rules,     prompt: none,      temperature: 0}
   haiku_specA: {provider: anthropic, model: claude-haiku-5-5,  prompt: standard,  temperature: 1.0,
                 focus: [License Grant, Cap On Liability, Anti-Assignment, Audit Rights, Insurance]}
   haiku_specB: {provider: anthropic, model: claude-haiku-5-5,  prompt: standard,  temperature: 1.0,
@@ -51,6 +52,7 @@ budget:
 # https://developers.openai.com/api/docs/pricing (standard tier, context up to 272K)
 # OpenAI reasoning tokens are billed as output.
 pricing:
+  keyword-rules:     {input: 0, output: 0}
   claude-haiku-5-5:  {input: 0.10, cache_write: 0.125, cache_read: 0.01, output: 0.50}
   claude-sonnet-5-5: {input: 2.00, cache_write: 2.50,  cache_read: 0.10, output: 10.00}
   gpt-6-luna:        {input: 0.10, cache_read: 0.01, output: 0.50}

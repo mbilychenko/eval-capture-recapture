@@ -1,11 +1,11 @@
 category,gold_items,contracts,max_per_contract
-Anti-Assignment,121,81,5
-Cap On Liability,92,45,5
-License Grant,92,50,9
-Revenue/Profit Sharing,81,39,7
-Exclusivity,63,36,5
-Insurance,55,27,7
-Minimum Commitment,54,32,4
-Ip Ownership Assignment,48,20,6
-Audit Rights,43,30,6
-Post-Termination Services,41,29,5
+Anti-Assignment,238,174,5
+License Grant,208,106,9
+Cap On Liability,196,101,7
+Revenue/Profit Sharing,149,72,7
+Exclusivity,132,72,5
+Insurance,126,51,12
+Audit Rights,104,65,6
+Ip Ownership Assignment,95,43,6
+Minimum Commitment,90,51,5
+Post-Termination Services,75,57,5
