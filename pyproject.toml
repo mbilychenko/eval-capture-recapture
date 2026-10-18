@@ -1,0 +1,16 @@
+[project]
+name = "crc-evals"
+version = "0.1.0"
+description = "Capture-recapture for AI evaluation: estimate what every evaluator missed"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
