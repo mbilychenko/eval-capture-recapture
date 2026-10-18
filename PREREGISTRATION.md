@@ -97,4 +97,4 @@ And when does it go wrong? The forest example (Act 1 of the article) named four 
 - If the dry run shows that an agent's output can't be parsed or located for more than 20% of its quotes, its prompt or parameters may be fixed **before** the full run. Any such fix is logged in §9.
 
 ## 9. Changes after registration
-*(none yet)*
+- **2026-10-18, dry run.** The Anthropic SDK in use (1.15) no longer accepts a `temperature` parameter, so Claude agents run with the API's default sampling; OpenAI agents keep temperature 1.0. Repeated runs of the same Claude model (haiku_run1 vs haiku_run2) still differ through sampling, which the dry run checks.

@@ -101,7 +101,7 @@ def call_anthropic(model, system, contract_text, task, temperature, max_tokens=8
     client = anthropic.Anthropic()
     # Contract first, cached: the same contract is read by several Anthropic agents.
     r = client.messages.create(
-        model=model, max_tokens=max_tokens, temperature=temperature,
+        model=model, max_tokens=max_tokens,   # SDK 1.x: no temperature; models use their default sampling
         system=[{"type": "text", "text": "CONTRACT:\n" + contract_text, "cache_control": {"type": "ephemeral"}},
                 {"type": "text", "text": system}],
         messages=[{"role": "user", "content": task}],
