@@ -1,0 +1,45 @@
+category,method,N_true,found,N_hat,rel_err,interactions
+all,chao_mh,1413,1286,1312.6098081023454,-0.07104755265226792,
+all,jackknife1,1413,1286,1341.7142857142858,-0.05044990395308857,
+all,jackknife2,1413,1286,1348.857142857143,-0.045394803356586744,
+all,loglinear,1413,1286,1359.949539378834,-0.037544558118305704,"[('haiku_run1', 'haiku_run2'), ('haiku_run1', 'haiku_alt'), ('haiku_run1', 'sonnet'), ('haiku_run2', 'gpt_luna'), ('haiku_alt', 'gpt_sol'), ('haiku_run2', 'haiku_alt'), ('sonnet', 'gpt_luna'), ('gpt_luna', 'keyword'), ('gpt_luna', 'gpt_sol'), ('haiku_alt', 'sonnet'), ('gpt_sol', 'keyword'), ('haiku_run2', 'sonnet'), ('haiku_run1', 'gpt_luna'), ('haiku_run2', 'gpt_sol'), ('haiku_alt', 'keyword')]"
+Anti-Assignment,chao_mh,238,224,224.42857142857142,-0.05702280912364954,
+Anti-Assignment,jackknife1,238,224,227.42857142857142,-0.044417767106842754,
+Anti-Assignment,jackknife2,238,224,223.73809523809524,-0.05992396958783508,
+Anti-Assignment,loglinear,238,224,226.36268708312286,-0.04889627275998798,"[('haiku_run2', 'haiku_alt'), ('haiku_run1', 'haiku_run2'), ('haiku_alt', 'gpt_luna'), ('haiku_run2', 'sonnet'), ('gpt_luna', 'keyword'), ('haiku_run2', 'gpt_sol'), ('gpt_sol', 'keyword')]"
+Audit Rights,chao_mh,104,101,101.0,-0.028846153846153855,
+Audit Rights,jackknife1,104,101,101.0,-0.028846153846153855,
+Audit Rights,jackknife2,104,101,99.21428571428571,-0.046016483516483575,
+Audit Rights,loglinear,104,101,101.08163658303002,-0.02806118670163449,"[('haiku_run1', 'haiku_run2'), ('haiku_run2', 'haiku_alt'), ('haiku_alt', 'sonnet'), ('sonnet', 'gpt_luna'), ('gpt_luna', 'gpt_sol'), ('haiku_run1', 'haiku_alt')]"
+Cap On Liability,chao_mh,196,177,179.96703296703296,-0.08180085220901545,
+Cap On Liability,jackknife1,196,177,185.57142857142858,-0.05320699708454801,
+Cap On Liability,jackknife2,196,177,185.57142857142858,-0.05320699708454801,
+Cap On Liability,loglinear,196,177,179.1233380743373,-0.08610541798807492,"[('haiku_run1', 'haiku_alt'), ('haiku_run2', 'haiku_alt'), ('haiku_alt', 'sonnet'), ('sonnet', 'keyword'), ('haiku_run1', 'gpt_luna'), ('haiku_run1', 'haiku_run2'), ('gpt_luna', 'keyword'), ('haiku_run2', 'sonnet'), ('haiku_alt', 'gpt_sol')]"
+Exclusivity,chao_mh,132,129,129.5142857142857,-0.018831168831168865,
+Exclusivity,jackknife1,132,129,132.42857142857142,0.0032467532467530535,
+Exclusivity,jackknife2,132,129,129.92857142857142,-0.015692640692640758,
+Exclusivity,loglinear,132,129,129.19034427108315,-0.021285270673612522,"[('haiku_run1', 'haiku_run2'), ('haiku_run1', 'haiku_alt'), ('haiku_run2', 'sonnet'), ('haiku_run1', 'gpt_luna'), ('haiku_run1', 'gpt_sol'), ('haiku_run2', 'keyword'), ('haiku_run2', 'haiku_alt')]"
+Insurance,chao_mh,126,126,126.0,0.0,
+Insurance,jackknife1,126,126,126.85714285714286,0.006802721088435382,
+Insurance,jackknife2,126,126,123.4047619047619,-0.0205971277399849,
+Insurance,loglinear,126,126,126.0047751909957,3.789834123568703e-05,"[('haiku_run1', 'haiku_run2'), ('haiku_run1', 'sonnet'), ('haiku_run1', 'haiku_alt'), ('haiku_run1', 'gpt_luna')]"
+Ip Ownership Assignment,chao_mh,95,86,95.64285714285714,0.006766917293232977,
+Ip Ownership Assignment,jackknife1,95,86,94.57142857142857,-0.004511278195488688,
+Ip Ownership Assignment,jackknife2,95,86,99.92857142857142,0.05187969924812008,
+Ip Ownership Assignment,loglinear,95,86,89.63758711252349,-0.056446451447121126,"[('haiku_run1', 'haiku_alt'), ('haiku_run1', 'haiku_run2'), ('haiku_run2', 'gpt_luna'), ('haiku_alt', 'sonnet'), ('haiku_run2', 'gpt_sol'), ('sonnet', 'gpt_luna'), ('gpt_luna', 'keyword')]"
+License Grant,chao_mh,208,192,195.6,-0.059615384615384626,
+License Grant,jackknife1,208,192,198.0,-0.04807692307692313,
+License Grant,jackknife2,208,192,200.61904761904762,-0.03548534798534797,
+License Grant,loglinear,208,192,193.06561812862412,-0.07179991284315324,"[('haiku_run1', 'haiku_run2'), ('haiku_run2', 'haiku_alt'), ('haiku_run2', 'gpt_luna'), ('haiku_run2', 'sonnet'), ('gpt_luna', 'keyword'), ('gpt_luna', 'gpt_sol'), ('sonnet', 'keyword'), ('haiku_run1', 'haiku_alt')]"
+Minimum Commitment,chao_mh,90,55,72.14285714285714,-0.19841269841269848,
+Minimum Commitment,jackknife1,90,55,68.71428571428571,-0.23650793650793656,
+Minimum Commitment,jackknife2,90,55,77.16666666666666,-0.14259259259259272,
+Minimum Commitment,loglinear,90,55,84.75999710258483,-0.05822225441572404,"[('haiku_run2', 'haiku_alt'), ('haiku_run1', 'haiku_alt'), ('haiku_alt', 'gpt_sol'), ('haiku_run2', 'gpt_luna'), ('haiku_run2', 'sonnet'), ('gpt_luna', 'gpt_sol'), ('haiku_run1', 'sonnet'), ('gpt_luna', 'keyword')]"
+Post-Termination Services,chao_mh,75,75,77.14285714285714,0.02857142857142847,
+Post-Termination Services,jackknife1,75,75,79.28571428571429,0.05714285714285716,
+Post-Termination Services,jackknife2,75,75,81.07142857142857,0.08095238095238089,
+Post-Termination Services,loglinear,75,75,75.6614679858052,0.008819573144069448,"[('haiku_run2', 'haiku_alt'), ('haiku_run1', 'haiku_run2'), ('haiku_alt', 'sonnet'), ('haiku_run2', 'gpt_luna'), ('sonnet', 'gpt_sol'), ('sonnet', 'keyword')]"
+Revenue/Profit Sharing,chao_mh,149,121,123.4,-0.17181208053691266,
+Revenue/Profit Sharing,jackknife1,149,121,127.85714285714286,-0.14189837008628947,
+Revenue/Profit Sharing,jackknife2,149,121,128.21428571428572,-0.13950143815915628,
+Revenue/Profit Sharing,loglinear,149,121,123.24062610523112,-0.17288170399173752,"[('haiku_run1', 'haiku_run2'), ('haiku_run1', 'sonnet'), ('haiku_run1', 'haiku_alt'), ('sonnet', 'gpt_luna'), ('haiku_alt', 'gpt_sol'), ('sonnet', 'gpt_sol'), ('haiku_run2', 'haiku_alt')]"

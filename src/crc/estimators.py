@@ -49,31 +49,36 @@ def chapman(n1: int, n2: int, m: int, z: float = 1.96) -> Estimate:
     return Estimate(N=N, lo=N - z * se, hi=N + z * se, found=n1 + n2 - m, method="chapman")
 
 
-def _freq(H: np.ndarray) -> tuple[int, int, np.ndarray]:
-    """S = items seen, t = sources, f[j] = items seen by exactly j sources (j = 1..t)."""
+def _freq(H: np.ndarray, weights: np.ndarray | None = None) -> tuple[float, int, np.ndarray]:
+    """S = items seen, t = sources, f[j] = items seen by exactly j sources (j = 1..t).
+
+    weights (optional, one per row): count each item as w instead of 1, e.g. the
+    audit-estimated chance that an unlabelled item is real.
+    """
     H = np.asarray(H, dtype=int)
     k = H.sum(axis=1)
-    k = k[k > 0]
+    w = np.ones(len(H)) if weights is None else np.asarray(weights, dtype=float)
+    keep = k > 0
     t = H.shape[1]
-    f = np.bincount(k, minlength=t + 1)
-    return len(k), t, f
+    f = np.bincount(k[keep], weights=w[keep], minlength=t + 1)
+    return float(w[keep].sum()), t, f
 
 
-def chao_mh(H: np.ndarray) -> Estimate:
+def chao_mh(H: np.ndarray, weights: np.ndarray | None = None) -> Estimate:
     """Chao (1987) lower bound for model Mh: items differ in how easy they are to catch.
 
     Uses the bias-corrected form N = S + (t-1)/t * f1 (f1 - 1) / (2 (f2 + 1)),
     which stays finite when no item is seen exactly twice (classic form: S + f1^2 / (2 f2)).
     """
-    S, t, f = _freq(H)
-    f1, f2 = int(f[1]), int(f[2]) if t >= 2 else 0
-    N = S + (t - 1) / t * f1 * (f1 - 1) / (2 * (f2 + 1))
-    return Estimate(N=N, found=S, method="chao_mh", detail={"f1": int(f1), "f2": int(f2), "t": t})
+    S, t, f = _freq(H, weights)
+    f1, f2 = float(f[1]), float(f[2]) if t >= 2 else 0.0
+    N = S + (t - 1) / t * f1 * max(f1 - 1, 0) / (2 * (f2 + 1))
+    return Estimate(N=N, found=S, method="chao_mh", detail={"f1": f1, "f2": f2, "t": t})
 
 
-def jackknife_mh(H: np.ndarray, order: int = 1) -> Estimate:
+def jackknife_mh(H: np.ndarray, order: int = 1, weights: np.ndarray | None = None) -> Estimate:
     """Burnham & Overton (1978) jackknife for model Mh, first or second order."""
-    S, t, f = _freq(H)
+    S, t, f = _freq(H, weights)
     if order == 1:
         N = S + (t - 1) / t * f[1]
     elif order == 2:
@@ -85,7 +90,8 @@ def jackknife_mh(H: np.ndarray, order: int = 1) -> Estimate:
     return Estimate(N=N, found=S, method=f"jackknife{order}_mh", detail={"t": t})
 
 
-def loglinear(H: np.ndarray, max_interactions: int | None = None, names: list[str] | None = None) -> Estimate:
+def loglinear(H: np.ndarray, max_interactions: int | None = None, names: list[str] | None = None,
+              weights: np.ndarray | None = None) -> Estimate:
     """Multi-source log-linear estimate (Fienberg 1972) with AIC-selected pairwise dependence.
 
     Counts each observed capture pattern, fits a Poisson GLM with main effects plus
@@ -101,10 +107,11 @@ def loglinear(H: np.ndarray, max_interactions: int | None = None, names: list[st
         raise ValueError("log-linear models need at least 3 sources")
     names = names or [f"s{i}" for i in range(t)]
     patterns = [p for p in product([0, 1], repeat=t) if any(p)]
-    counts = {p: 0 for p in patterns}
-    for row in H:
+    counts = {p: 0.0 for p in patterns}
+    w = np.ones(len(H)) if weights is None else np.asarray(weights, dtype=float)
+    for row, wi in zip(H, w):
         if row.any():
-            counts[tuple(row)] += 1
+            counts[tuple(row)] += wi
     X_main = np.array(patterns, dtype=float)
     y = np.array([counts[p] for p in patterns], dtype=float)
     pairs = list(combinations(range(t), 2))
@@ -126,7 +133,7 @@ def loglinear(H: np.ndarray, max_interactions: int | None = None, names: list[st
             break
         best, chosen = res, chosen + [p]
     b0, se0 = best.params[0], best.bse[0]
-    S = int(y.sum())
+    S = float(y.sum())
     return Estimate(N=S + np.exp(b0), lo=S + np.exp(b0 - 1.96 * se0), hi=S + np.exp(b0 + 1.96 * se0),
                     found=S, method="loglinear",
                     detail={"interactions": [(names[i], names[j]) for i, j in chosen], "aic": float(best.aic)})

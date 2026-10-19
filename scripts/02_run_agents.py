@@ -23,6 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
+    import sys
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--agents", nargs="*")

@@ -1,0 +1,10 @@
+agent,model,prompt,quotes_located,precision,recall,gold_caught
+haiku_run1,claude-haiku-5-5,standard,2004,0.514,0.749,1059
+haiku_run2,claude-haiku-5-5,standard,1998,0.513,0.742,1048
+haiku_alt,claude-haiku-5-5,checklist,2013,0.491,0.747,1056
+sonnet,claude-sonnet-5-5,standard,2040,0.5,0.749,1058
+gpt_luna,gpt-6-luna,standard,2416,0.444,0.745,1052
+gpt_sol,gpt-6.1-sol,standard,2607,0.405,0.86,1215
+keyword,keyword-rules,none,2374,0.325,0.534,755
+haiku_specA,claude-haiku-5-5,standard,1696,0.583,0.728,1028
+haiku_specB,claude-haiku-5-5,standard,2050,0.453,0.686,970

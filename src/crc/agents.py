@@ -175,4 +175,4 @@ def safe(s: str) -> str:
 
 def keys_present(providers: set[str]) -> list[str]:
     need = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
-    return [need[p] for p in providers if not os.environ.get(need[p])]
+    return [need[p] for p in providers if p in need and not os.environ.get(need[p])]

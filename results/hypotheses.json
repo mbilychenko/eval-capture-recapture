@@ -1,0 +1,203 @@
+{
+  "by_type": {
+    "same model, same prompt": {
+      "median_rel_err": -0.19,
+      "coverage": 0.0,
+      "median_dep": 1.235,
+      "n": 10
+    },
+    "same model, other prompt": {
+      "median_rel_err": -0.187,
+      "coverage": 0.0,
+      "median_dep": 1.231,
+      "n": 20
+    },
+    "same family": {
+      "median_rel_err": -0.129,
+      "coverage": 0.0,
+      "median_dep": 1.149,
+      "n": 40
+    },
+    "other family": {
+      "median_rel_err": -0.106,
+      "coverage": 0.012,
+      "median_dep": 1.119,
+      "n": 80
+    },
+    "different method": {
+      "median_rel_err": -0.104,
+      "coverage": 0.267,
+      "median_dep": 1.115,
+      "n": 60
+    }
+  },
+  "labelling_artefacts": {
+    "short_labels_lt40": 13,
+    "missed_by_all": 127,
+    "missed_by_all_short": 4,
+    "median_rel_err_by_type_without_short": {
+      "same model, same prompt": -0.188,
+      "same model, other prompt": -0.185,
+      "same family": -0.128,
+      "other family": -0.099,
+      "different method": -0.098
+    }
+  },
+  "N_true": 1413,
+  "hypotheses": {
+    "H1": {
+      "coverage_cross_family": 0.0125,
+      "supported": false
+    },
+    "H2": {
+      "median_rel_err_by_type": {
+        "same model, same prompt": -0.19,
+        "same model, other prompt": -0.187,
+        "same family": -0.129,
+        "other family": -0.106,
+        "different method": -0.104
+      },
+      "ordered_as_predicted": true
+    },
+    "H3": {
+      "cross_family_median_rel_err": -0.10638269111897958,
+      "heterogeneity_median_rel_err": {
+        "chao_mh": -0.043,
+        "jackknife2": -0.041
+      },
+      "supported": true
+    },
+    "H4": {
+      "specialist_median_rel_err": -0.18309994787610484,
+      "supported": false
+    },
+    "H5": {
+      "N_by_threshold": {
+        "0.3": 1187.4,
+        "0.5": 1165.9,
+        "0.7": 1095.5
+      },
+      "monotonic": true,
+      "two_source_spread": 161.39111045610366
+    },
+    "H6": {
+      "median_abs_rel_err_two_source": 0.12116526623259644,
+      "loglinear": 0.05267136210355455,
+      "jackknife2": 0.05254334816633405,
+      "supported": true
+    },
+    "H7": {
+      "spearman_dep_vs_estimate": [
+        -1.0,
+        0.0
+      ],
+      "spearman_dep_vs_ci_width": [
+        -0.28051948051948056,
+        0.21806007395025545
+      ],
+      "supported": true
+    },
+    "H8": {
+      "most_dependent_pair": [
+        "haiku_run1",
+        "haiku_run2"
+      ],
+      "label_free_interactions": [
+        [
+          "haiku_run1",
+          "haiku_run2"
+        ],
+        [
+          "haiku_run1",
+          "haiku_alt"
+        ],
+        [
+          "haiku_run2",
+          "sonnet"
+        ],
+        [
+          "sonnet",
+          "gpt_luna"
+        ],
+        [
+          "haiku_alt",
+          "gpt_sol"
+        ],
+        [
+          "gpt_luna",
+          "gpt_sol"
+        ],
+        [
+          "haiku_run2",
+          "haiku_alt"
+        ],
+        [
+          "gpt_luna",
+          "keyword"
+        ],
+        [
+          "haiku_run1",
+          "gpt_luna"
+        ],
+        [
+          "sonnet",
+          "gpt_sol"
+        ],
+        [
+          "sonnet",
+          "keyword"
+        ],
+        [
+          "haiku_run1",
+          "sonnet"
+        ],
+        [
+          "haiku_run2",
+          "gpt_luna"
+        ]
+      ],
+      "supported": true
+    },
+    "H9": {
+      "median_dep_keyword_pairs": 1.1152748688330372,
+      "median_dep_llm_pairs": 1.1435029955627394,
+      "median_abs_err_keyword_pairs": 0.10362331296154825,
+      "median_abs_err_llm_pairs": 0.12551441457051676,
+      "supported": true
+    },
+    "H0": {
+      "mae": {
+        "pooled": 0.10185593704441494,
+        "best_pair": 0.09644032089097869,
+        "all_agents": 0.018236513217428633
+      },
+      "mae_ci": {
+        "pooled": [
+          0.056996048466123245,
+          0.1363233170423937
+        ],
+        "best_pair": [
+          0.05792044136364048,
+          0.1431202884048931
+        ],
+        "all_agents": [
+          0.011745487022483025,
+          0.10302948513575835
+        ]
+      },
+      "all_minus_pooled_ci": [
+        -0.09141270574097207,
+        0.018535396549858908
+      ],
+      "best_pair": [
+        "gpt_sol",
+        "keyword"
+      ],
+      "audited_clusters": 408,
+      "N_true": 1413,
+      "N_pool": 1026.6664829827769,
+      "N_loglinear": 1165.9032078814391,
+      "supported": true
+    }
+  }
+}

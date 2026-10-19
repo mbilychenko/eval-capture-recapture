@@ -16,7 +16,7 @@ import yaml
 
 from crc.agents import RAW_OUT, safe
 from crc.data import gold_items, load_sample
-from crc.matching import cluster_histories, gold_histories, locate_all
+from crc.matching import cluster_histories, gold_histories, locate_all, overlap_share
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -57,9 +57,15 @@ def main():
         g.insert(0, "item", [x["item"] for x in gold])
         g.insert(1, "category", [x["category"] for x in gold])
         g.to_csv(out / f"histories_t{thr}{suffix}.csv", index=False)
-        C, spans = cluster_histories(preds, agents, thr)
-        cdf = pd.DataFrame(C, columns=agents)
-        cdf = pd.concat([pd.DataFrame(spans), cdf], axis=1)
+        main = cfg["main_agents"]
+        C, spans = cluster_histories([p for p in preds if p["agent"] in main], main, thr)
+        cdf = pd.concat([pd.DataFrame(spans), pd.DataFrame(C, columns=main)], axis=1)
+        # is_real: the cluster overlaps a labelled clause (used only for the simulated audit)
+        gold_by = {}
+        for x in gold:
+            gold_by.setdefault((x["contract"], x["category"]), []).append((x["start"], x["end"]))
+        cdf["is_real"] = [any(overlap_share((r.start, r.end), gsp) >= thr for gsp in gold_by.get((r.contract, r.category), []))
+                          for r in cdf.itertuples()]
         cdf.to_csv(out / f"clusters_t{thr}{suffix}.csv", index=False)
         if thr == m["overlap_threshold"]:
             rows = [{"agent": a, "model": cfg["agents"][a]["model"], "prompt": cfg["agents"][a]["prompt"],
