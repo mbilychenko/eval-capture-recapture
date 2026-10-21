@@ -6,7 +6,7 @@
 > Hendrycks, D., Burns, C., Chen, A., & Ball, S. (2021). *CUAD: An Expert-Annotated NLP Dataset for Legal Contract Review.* NeurIPS Datasets and Benchmarks. https://arxiv.org/abs/2103.06268. Data: https://zenodo.org/records/4595826
 
 Changes made here:
-- a seeded subset of 150 contracts and 10 clause categories was taken;
+- a seeded subset of 294 contracts (those under 40,000 characters) and 10 clause categories was taken;
 - overlapping labels were merged;
 - AI agents' quotes from the contracts were added (`outputs/raw/`).
 

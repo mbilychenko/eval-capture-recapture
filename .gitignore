@@ -7,3 +7,7 @@ __pycache__/
 data/raw/
 *.zip
 *.egg-info/
+*.log
+results/*_dry.csv
+article/
+notebooks/
