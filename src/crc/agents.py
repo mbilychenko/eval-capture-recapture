@@ -8,6 +8,7 @@ and cost go to outputs/ledger.csv; the run stops before it crosses the budget.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import os
 import re
@@ -170,7 +171,8 @@ def run_agent(name: str, spec: dict, contract: dict, budget: Budget, retries: in
 
 
 def safe(s: str) -> str:
-    return re.sub(r"[^A-Za-z0-9_.-]+", "_", s)[:150]
+    """Short, unique file name for a contract id (CUAD titles exceed Windows' path limit)."""
+    return re.sub(r"[^A-Za-z0-9_-]+", "_", s)[:50] + "_" + hashlib.sha1(s.encode("utf-8")).hexdigest()[:8]
 
 
 def keys_present(providers: set[str]) -> list[str]:
