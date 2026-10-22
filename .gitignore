@@ -11,3 +11,4 @@ data/raw/
 results/*_dry.csv
 article/
 notebooks/
+outputs/raw/

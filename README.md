@@ -52,7 +52,7 @@ Capture–recapture needs sources that search **independently**. An LLM judge th
 
 ## Reproduce the results
 
-No API keys are needed. Every agent response is cached in `outputs/raw/`.
+No API keys are needed. All 2,646 agent responses are cached in one file, `outputs/agent_responses.jsonl.gz` (2 MB).
 
 ```bash
 git clone https://github.com/mbilychenko/eval-capture-recapture.git
@@ -76,7 +76,7 @@ python scripts/02_run_agents.py --dry-run   # 5 contracts first
 python scripts/02_run_agents.py   # all contracts; stops at the budget in config.yaml
 ```
 
-The full run in the article cost **$14.71** (9 agents × 294 contracts, logged in `outputs/ledger.csv`). Model outputs are not deterministic, so a fresh run will give slightly different numbers.
+The full run in the article cost **$14.71** (9 agents × 294 contracts, logged in `outputs/ledger.csv`). Cached responses are reused, so to call the models again, move `outputs/agent_responses.jsonl.gz` aside first. Model outputs are not deterministic, so a fresh run will give slightly different numbers.
 
 ## Agents
 
@@ -103,7 +103,7 @@ scripts/            00_download -> 05_forests, run in order
 tests/              estimator and matching tests
 config.yaml         models, prompts, categories, sample size, seed, matching rule, budget
 data/sample.json    the 294 sampled contracts with their labels
-outputs/            cached agent responses + cost ledger
+outputs/            agent_responses.jsonl.gz (all cached responses) + ledger.csv (cost per call)
 results/            every CSV behind the article and RESULTS.md
 figures/            the article's figures
 ```

@@ -8,7 +8,7 @@
 Changes made here:
 - a seeded subset of 294 contracts (those under 40,000 characters) and 10 clause categories was taken;
 - overlapping labels were merged;
-- AI agents' quotes from the contracts were added (`outputs/raw/`).
+- AI agents' quotes from the contracts were added (`outputs/agent_responses.jsonl.gz`).
 
 ## Forest counts (Act 1 of the article)
 `scripts/05_forests.py` contains only aggregate counts from the author's own analysis of:

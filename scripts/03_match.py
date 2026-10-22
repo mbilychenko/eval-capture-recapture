@@ -8,13 +8,12 @@ Writes, for each matching threshold in config (matching.sensitivity):
 Usage:  python scripts/03_match.py [--dry-run]
 """
 import argparse
-import json
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
-from crc.agents import RAW_OUT, safe
+from crc.agents import load_cached
 from crc.data import gold_items, load_sample
 from crc.matching import cluster_histories, gold_histories, locate_all, overlap_share
 
@@ -25,9 +24,9 @@ def load_responses(sample, agents):
     resp = {}
     for a in agents:
         for c in sample:
-            f = RAW_OUT / a / f"{safe(c['id'])}.json"
-            if f.exists():
-                resp[(a, c["id"])] = json.loads(f.read_text(encoding="utf-8"))
+            rec = load_cached(a, c["id"])
+            if rec is not None:
+                resp[(a, c["id"])] = rec
     return resp
 
 

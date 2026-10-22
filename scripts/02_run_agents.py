@@ -5,7 +5,7 @@ Usage:
     python scripts/02_run_agents.py                    # all contracts
     python scripts/02_run_agents.py --agents sonnet    # one agent only
 Needs ANTHROPIC_API_KEY / OPENAI_API_KEY in .env. Not needed to reproduce the analysis:
-the cached responses in outputs/raw/ are enough.
+the cached responses in outputs/agent_responses.jsonl.gz are enough.
 """
 import argparse
 from collections import defaultdict
@@ -16,7 +16,7 @@ import yaml
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-from crc.agents import Budget, keys_present, run_agent
+from crc.agents import Budget, keys_present, pack_cache, run_agent
 from crc.data import load_sample
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -54,6 +54,7 @@ def main():
     for a, usd in spent.items():
         print(f"  {a:<13} ${usd:.3f}")
     print(f"total spent so far ${budget.spent:.2f} (hard stop ${cfg['budget']['hard_stop_usd']})")
+    print(f"packed {pack_cache()} responses into outputs/agent_responses.jsonl.gz")
 
 
 if __name__ == "__main__":

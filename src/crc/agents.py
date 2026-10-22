@@ -1,13 +1,15 @@
 """Contract-review agents: one LLM pass that quotes every clause of the requested types.
 
 Each agent = (provider, model, prompt style, temperature). Responses are cached to
-outputs/raw/<agent>/<contract>.json, so re-running never pays twice and the
-analysis can be reproduced from the cache with no API keys. Every call's tokens
+outputs/raw/<agent>/<contract>.json while running, then packed into one committed file,
+outputs/agent_responses.jsonl.gz, so re-running never pays twice and the
+analysis can be reproduced from it with no API keys. Every call's tokens
 and cost go to outputs/ledger.csv; the run stops before it crosses the budget.
 """
 from __future__ import annotations
 
 import csv
+import gzip
 import hashlib
 import json
 import os
@@ -17,7 +19,8 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RAW_OUT = ROOT / "outputs" / "raw"
+RAW_OUT = ROOT / "outputs" / "raw"                     # per-call cache while running (not committed)
+BUNDLE = ROOT / "outputs" / "agent_responses.jsonl.gz"  # all responses in one committed file
 LEDGER = ROOT / "outputs" / "ledger.csv"
 
 SYSTEM_STANDARD = (
@@ -133,11 +136,50 @@ def call_openai(model, system, contract_text, task, temperature, max_tokens=1600
 CALLERS = {"anthropic": call_anthropic, "openai": call_openai}
 
 
+_bundle: dict | None = None
+_bundle_lock = threading.Lock()
+
+
+def bundled() -> dict:
+    """All committed responses from outputs/agent_responses.jsonl.gz, keyed by (agent, contract id)."""
+    global _bundle
+    with _bundle_lock:
+        if _bundle is None:
+            _bundle = {}
+            if BUNDLE.exists():
+                with gzip.open(BUNDLE, "rt", encoding="utf-8") as f:
+                    for line in f:
+                        rec = json.loads(line)
+                        _bundle[(rec["agent"], rec["contract"])] = rec
+    return _bundle
+
+
+def load_cached(agent: str, contract_id: str) -> dict | None:
+    """A response from this machine's outputs/raw/ cache, else from the committed bundle."""
+    f = RAW_OUT / agent / f"{safe(contract_id)}.json"
+    if f.exists():
+        return json.loads(f.read_text(encoding="utf-8"))
+    return bundled().get((agent, contract_id))
+
+
+def pack_cache() -> int:
+    """Write every response (bundle + outputs/raw/) into the single committed bundle file."""
+    recs = dict(bundled())
+    for f in RAW_OUT.glob("*/*.json"):
+        rec = json.loads(f.read_text(encoding="utf-8"))
+        recs[(rec["agent"], rec["contract"])] = rec
+    with gzip.open(BUNDLE, "wt", encoding="utf-8") as out:
+        for key in sorted(recs):
+            out.write(json.dumps(recs[key], ensure_ascii=False) + "\n")
+    return len(recs)
+
+
 def run_agent(name: str, spec: dict, contract: dict, budget: Budget, retries: int = 3) -> dict:
     """Return the cached or fresh response for one agent on one contract."""
+    cached = load_cached(name, contract["id"])
+    if cached is not None:
+        return cached
     out = RAW_OUT / name / f"{safe(contract['id'])}.json"
-    if out.exists():
-        return json.loads(out.read_text(encoding="utf-8"))
     if spec["provider"] == "keyword":                      # rule-based checker: no API, no cost
         from .keyword_agent import keyword_answer
         rec = {"agent": name, "contract": contract["id"], "model": "keyword-rules", "prompt": None,
