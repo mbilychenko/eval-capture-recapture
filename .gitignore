@@ -12,3 +12,4 @@ results/*_dry.csv
 article/
 notebooks/
 outputs/raw/
+outputs/agent_responses.jsonl.gz

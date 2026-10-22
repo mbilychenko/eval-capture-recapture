@@ -1,14 +1,14 @@
 # Data notice
 
 ## CUAD (contracts and clause labels)
-`data/sample.json` and the cached agent outputs in `outputs/` contain contract text and labels from the **Contract Understanding Atticus Dataset (CUAD) v1**, by The Atticus Project. It is licensed under **Creative Commons Attribution 4.0 (CC BY 4.0)**: https://creativecommons.org/licenses/by/4.0/
+`data/sample.json` contains contract text and labels from the **Contract Understanding Atticus Dataset (CUAD) v1**, by The Atticus Project. It is licensed under **Creative Commons Attribution 4.0 (CC BY 4.0)**: https://creativecommons.org/licenses/by/4.0/
 
 > Hendrycks, D., Burns, C., Chen, A., & Ball, S. (2021). *CUAD: An Expert-Annotated NLP Dataset for Legal Contract Review.* NeurIPS Datasets and Benchmarks. https://arxiv.org/abs/2103.06268. Data: https://zenodo.org/records/4595826
 
 Changes made here:
 - a seeded subset of 294 contracts (those under 40,000 characters) and 10 clause categories was taken;
 - overlapping labels were merged;
-- AI agents' quotes from the contracts were added (`outputs/agent_responses.jsonl.gz`).
+- `results/` records which labelled clauses each AI agent found, as character positions in the contracts. The agents' own answers are not included.
 
 ## Forest counts (Act 1 of the article)
 `scripts/05_forests.py` contains only aggregate counts from the author's own analysis of:

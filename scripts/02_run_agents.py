@@ -5,7 +5,7 @@ Usage:
     python scripts/02_run_agents.py                    # all contracts
     python scripts/02_run_agents.py --agents sonnet    # one agent only
 Needs ANTHROPIC_API_KEY / OPENAI_API_KEY in .env. Not needed to reproduce the analysis:
-the cached responses in outputs/agent_responses.jsonl.gz are enough.
+the matched results in results/ are enough.
 """
 import argparse
 from collections import defaultdict

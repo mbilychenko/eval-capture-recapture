@@ -52,7 +52,9 @@ Capture–recapture needs sources that search **independently**. An LLM judge th
 
 ## Reproduce the results
 
-No API keys are needed. All 2,646 agent responses are cached in one file, `outputs/agent_responses.jsonl.gz` (2 MB).
+### The analysis (no API keys)
+
+The repo includes the matched results from the article's run: for every labelled clause and every agent, whether the agent found it (`results/histories_t*.csv`), and the same without labels (`results/clusters_t*.csv`). Every estimate, hypothesis test and figure is computed from these files.
 
 ```bash
 git clone https://github.com/mbilychenko/eval-capture-recapture.git
@@ -61,12 +63,13 @@ python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\act
 pip install -r requirements.txt && pip install -e .
 
 pytest                            # estimator and matching tests
-python scripts/03_match.py        # match agent quotes to the lawyers' labels -> results/
 python scripts/04_analyze.py      # test every hypothesis, draw figures 2-6 (a few minutes: bootstrap)
 python scripts/05_forests.py      # the forest example from the article -> figure 1
 ```
 
-### Re-run the agents (optional, about $15)
+### The full pipeline (API keys, about $15)
+
+The agents' raw answers are not included, so to rebuild the matched results from scratch you run the agents yourself:
 
 ```bash
 cp .env.example .env              # add ANTHROPIC_API_KEY and OPENAI_API_KEY
@@ -74,9 +77,11 @@ python scripts/00_download.py     # CUAD v1 from Zenodo (~106 MB) -> data/raw/
 python scripts/01_sample.py       # seeded sample of 294 contracts -> data/sample.json
 python scripts/02_run_agents.py --dry-run   # 5 contracts first
 python scripts/02_run_agents.py   # all contracts; stops at the budget in config.yaml
+python scripts/03_match.py        # match agent quotes to the lawyers' labels -> results/
+python scripts/04_analyze.py
 ```
 
-The full run in the article cost **$14.71** (9 agents × 294 contracts, logged in `outputs/ledger.csv`). Cached responses are reused, so to call the models again, move `outputs/agent_responses.jsonl.gz` aside first. Model outputs are not deterministic, so a fresh run will give slightly different numbers.
+The run in the article cost **$14.71** (9 agents × 294 contracts, logged per call in `outputs/ledger.csv`). Model outputs are not deterministic, so a fresh run will give slightly different numbers. The keyword agent needs no keys: `python scripts/02_run_agents.py --agents keyword`.
 
 ## Agents
 
@@ -103,7 +108,7 @@ scripts/            00_download -> 05_forests, run in order
 tests/              estimator and matching tests
 config.yaml         models, prompts, categories, sample size, seed, matching rule, budget
 data/sample.json    the 294 sampled contracts with their labels
-outputs/            agent_responses.jsonl.gz (all cached responses) + ledger.csv (cost per call)
+outputs/ledger.csv  tokens and cost of every API call in the article's run
 results/            every CSV behind the article and RESULTS.md
 figures/            the article's figures
 ```

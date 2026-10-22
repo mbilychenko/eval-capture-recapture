@@ -1,9 +1,9 @@
 """Contract-review agents: one LLM pass that quotes every clause of the requested types.
 
 Each agent = (provider, model, prompt style, temperature). Responses are cached to
-outputs/raw/<agent>/<contract>.json while running, then packed into one committed file,
-outputs/agent_responses.jsonl.gz, so re-running never pays twice and the
-analysis can be reproduced from it with no API keys. Every call's tokens
+outputs/raw/<agent>/<contract>.json while running, then packed into one file,
+outputs/agent_responses.jsonl.gz (kept local, not committed), so re-running never pays twice. The
+analysis itself runs from the matched results in results/. Every call's tokens
 and cost go to outputs/ledger.csv; the run stops before it crosses the budget.
 """
 from __future__ import annotations
@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW_OUT = ROOT / "outputs" / "raw"                     # per-call cache while running (not committed)
-BUNDLE = ROOT / "outputs" / "agent_responses.jsonl.gz"  # all responses in one committed file
+BUNDLE = ROOT / "outputs" / "agent_responses.jsonl.gz"  # all responses in one local file (not committed)
 LEDGER = ROOT / "outputs" / "ledger.csv"
 
 SYSTEM_STANDARD = (
@@ -141,7 +141,7 @@ _bundle_lock = threading.Lock()
 
 
 def bundled() -> dict:
-    """All committed responses from outputs/agent_responses.jsonl.gz, keyed by (agent, contract id)."""
+    """All responses packed in outputs/agent_responses.jsonl.gz, keyed by (agent, contract id)."""
     global _bundle
     with _bundle_lock:
         if _bundle is None:
@@ -155,7 +155,7 @@ def bundled() -> dict:
 
 
 def load_cached(agent: str, contract_id: str) -> dict | None:
-    """A response from this machine's outputs/raw/ cache, else from the committed bundle."""
+    """A response from the outputs/raw/ cache, else from the local bundle."""
     f = RAW_OUT / agent / f"{safe(contract_id)}.json"
     if f.exists():
         return json.loads(f.read_text(encoding="utf-8"))
@@ -163,7 +163,7 @@ def load_cached(agent: str, contract_id: str) -> dict | None:
 
 
 def pack_cache() -> int:
-    """Write every response (bundle + outputs/raw/) into the single committed bundle file."""
+    """Write every response (bundle + outputs/raw/) into the single local bundle file."""
     recs = dict(bundled())
     for f in RAW_OUT.glob("*/*.json"):
         rec = json.loads(f.read_text(encoding="utf-8"))
