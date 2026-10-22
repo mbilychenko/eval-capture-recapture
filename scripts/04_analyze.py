@@ -6,6 +6,7 @@ Writes results/*.csv, results/hypotheses.json and figures/fig2..fig6.
 Usage:  python scripts/04_analyze.py
 """
 import json
+import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
@@ -30,8 +31,16 @@ def load(thr):
     return H, C
 
 
-def boot_once(args):
-    H, C, main, share, seed, b = args
+_BOOT = {}
+
+
+def boot_init(H, C, main, share, seed):
+    """Give each worker process the data once, not once per resample (keeps memory low)."""
+    _BOOT.update(H=H, C=C, main=main, share=share, seed=seed)
+
+
+def boot_once(b):
+    H, C, main, share, seed = (_BOOT[k] for k in ("H", "C", "main", "share", "seed"))
     rng = np.random.default_rng(seed + 1000 + b)
     contracts = H["contract"].unique()
     pick = rng.choice(contracts, len(contracts), replace=True)
@@ -127,8 +136,9 @@ def main():
     R.to_csv(RES / "recall_estimates.csv", index=False)
     mae = {k: float((R[k] - R.true_recall).abs().mean()) for k in ("pooled", "best_pair", "all_agents")}
     B = cfg["bootstrap"]["resamples"]
-    with ProcessPoolExecutor() as ex:
-        boots = list(ex.map(boot_once, [(H, C, main, share, seed, b) for b in range(B)], chunksize=10))
+    with ProcessPoolExecutor(max_workers=min(8, os.cpu_count() or 1), initializer=boot_init,
+                             initargs=(H, C, main, share, seed)) as ex:
+        boots = list(ex.map(boot_once, range(B), chunksize=10))
     bdf = pd.DataFrame(boots)
     bdf.to_csv(RES / "bootstrap_recall_mae.csv", index=False)
     diff = bdf.all_agents - bdf.pooled
